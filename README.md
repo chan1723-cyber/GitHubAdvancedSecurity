@@ -163,3 +163,4 @@ Subir la rama al repositorio remoto:
 ```bash
 git push origin feature/nueva-funcionalidad
 ```
+Crear un PullRequest y agregar la URL a la entrega en e-aulas.
