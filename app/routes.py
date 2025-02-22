@@ -19,3 +19,12 @@ def register():
 def login():
     return render_template("login.html")
 
+
+@app.route('/edit_user/<email>', methods=['GET'])
+def edit_user(email):
+    db = read_db("db.txt")
+    user_info = db[email]
+    dni = user_info.get('dni')
+
+    return render_template('edit_user.html', user_data=user_info, email=email)
+
