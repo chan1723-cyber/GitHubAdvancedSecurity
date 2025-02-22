@@ -115,43 +115,34 @@ cd BankingSystem
 ```
 Eliminar la conexión con el repositorio original:
 
+```bash
 git remote remove origin
+```
 
-Crear un nuevo repositorio en GitHub o GitLab.
-
-Copia la URL del nuevo repositorio.
+Copia la URL de tu repositorio.
 
 Agregar el nuevo repositorio como remoto:
 
+```bash
 git remote add origin https://github.com/usuario/nuevo-repo.git
-
+```
 Subir el código al nuevo repositorio:
-
+```bash
 git push -u origin main
-
+```
 Crear una nueva rama para tu implementación:
-
+```bash
 git checkout -b feature/nueva-funcionalidad
-
+```
 Agregar los cambios realizados:
-
+```bash
 git add .
-
+```
 Realizar un commit con un mensaje descriptivo:
-
+```bash
 git commit -m "Agrega nueva funcionalidad de autorización basada en roles"
-
+```
 Subir la rama al repositorio remoto:
-
+```bash
 git push origin feature/nueva-funcionalidad
-
-Crear un Pull Request en GitHub o GitLab:
-
-Ir al repositorio en la plataforma.
-
-Seleccionar la rama feature/nueva-funcionalidad.
-
-Crear un Pull Request para su revisión y fusión en main o develop.
-
-
-
+```
