@@ -7,7 +7,7 @@
 ## 📖 Sección Teórica (1pt)
 El objetivo de esta sección es evaluar la comprensión precisa de los conceptos teóricos cubiertos en clase. Las preguntas son de opción múltiple y siguen el modelo de examen del Certified Application Security Engineer y de DevSecOps Essentials.
 
-1. **¿Cuál de los siguientes no es un tipo de autorización?**
+1. **¿Cuál de los siguientes no es un tipo de autorización?** 
    - [ ] 🔹 a) Managed Access Control  
    - [ ] 🔹 b) Mandatory Access Control  
    - [ ] 🔹 c) Discretionary Access Control  
@@ -130,6 +130,23 @@ Subir el código al nuevo repositorio:
 ```bash
 git push -u origin main
 ```
+Si experimentas errores de autenticación al hacer git pull o git push, sigue estos pasos para autenticarte localmente:
+
+ - Configurar almacenamiento de credenciales para HTTPS:
+```bash
+
+git config --global credential.helper store
+git push -u origin main
+```
+Luego, introduce tus credenciales cuando se te soliciten. Estas se guardarán localmente para futuras conexiones.
+
+- Autenticarse usando un token personal en HTTPS:
+Si usas autenticación con token en GitHub, usa este formato al hacer git pull o git push:
+```bash
+
+git remote set-url origin https://<TOKEN>@github.com/usuario/nuevo-repo.git
+```
+
 Crear una nueva rama para tu implementación:
 ```bash
 git checkout -b feature/nueva-funcionalidad
