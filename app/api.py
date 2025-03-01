@@ -112,6 +112,11 @@ def api_login():
 # Página principal del menú del cliente
 @app.route('/customer_menu')
 def customer_menu():
+    if 'email' not in session:
+        # Redirigir a la página de inicio de sesión si el usuario no está autenticado
+        error_msg = "Por favor, inicia sesión para acceder a esta página."
+        return render_template('login.html', error=error_msg)
+
     email = session.get('email')
     db = read_db("db.txt")
     transactions = read_db("transaction.txt")
