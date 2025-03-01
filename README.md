@@ -1,166 +1,91 @@
-# Lab1 - Secure Coding Practices for Input Validation, Authentication and Authorization
+# 💻 Desarrollo Seguro en Aplicaciones Bancarias
 
-## 🎓 Universidad del Rosario - 2025 – 1
+## 🏛 Universidad del Rosario - 2025 - 1
 
----
-
-## 📖 Sección Teórica (1pt)
-El objetivo de esta sección es evaluar la comprensión precisa de los conceptos teóricos cubiertos en clase. Las preguntas son de opción múltiple y siguen el modelo de examen del Certified Application Security Engineer y de DevSecOps Essentials.
-
-1. **¿Cuál de los siguientes no es un tipo de autorización?** 
-   - [ ] 🔹 a) Managed Access Control  
-   - [ ] 🔹 b) Mandatory Access Control  
-   - [ ] 🔹 c) Discretionary Access Control  
-   - [ ] 🔹 d) Role Based Access Control  
-
-2. **¿Qué mecanismo de seguridad implementarías para restringir el acceso de los usuarios a recursos específicos dentro de una aplicación?**
-   - [ ] 🔐 a) Autenticación  
-   - [ ] 🔐 b) Autorización  
-   - [ ] 🔐 c) Delegación  
-   - [ ] 🔐 d) Impersonación  
-
-3. **Según las prácticas de autenticación y autorización segura en el desarrollo de aplicaciones, ¿con qué tipo de privilegios no se debe ejecutar una aplicación?**
-   - [ ] 🚫 a) Privilegios de cuenta de administrador  
-   - [ ] 🚫 b) Privilegios de cuenta de usuario  
-   - [ ] 🚫 c) Privilegios de cuenta de invitado  
-   - [ ] 🚫 d) Privilegios de cuenta normal  
-
-4. **¿Cuál de las siguientes técnicas de seguridad implica el proceso de convertir datos potencialmente peligrosos en formatos seguros que se pueden mostrar o almacenar de forma segura?**
-   - [ ] 🛠️ a) Input Validation  
-   - [ ] 🔐 b) Encryption and Hashing  
-   - [ ] 🔄 c) Output Encoding  
-   - [ ] 🔑 d) Access Control  
-
-5. **¿Cuál es el principio central de la práctica de seguridad "Secure by Default"?**
-   - [ ] 🔒 a) Los sistemas deben estar diseñados para fallar en un estado seguro.  
-   - [ ] 🏛️ b) Diseñar la seguridad en los niveles físico, identidad y acceso, perímetro, red, cómputo, aplicación y datos.  
-   - [ ] 🔑 c) Requiere autenticación y autorización para cada acción.  
-   - [ ] 📜 d) Los requisitos de seguridad deben definirse al inicio del proceso de desarrollo de la aplicación.  
+En este ejercicio se abordarán múltiples aspectos de seguridad en una aplicación bancaria, incluyendo el tratamiento de datos confidenciales, autenticación en operaciones sensibles y manejo de sesiones. 
 
 ---
 
-## 🛠️ Sección Práctica (4pt)
+## 1️⃣ Tratamiento de Datos Restringidos
 
-### **🔐 Implementación de Seguridad en Autenticación y Autorización**
+### 🔐 Ofuscación y Cifrado de Datos Sensibles
 
-Se deberá complementar el módulo de login de BankingSystem con control de intentos fallidos para mitigar ataques de fuerza bruta y una lógica de autorización basada en roles.
+Para garantizar la privacidad de los datos almacenados y visualizados en la aplicación, se implementarán los siguientes controles:
 
-#### **1️⃣ Control de Intentos Fallidos en Autenticación (2pt)**
+- **Cédula**: 
+  - En la vista del cliente autenticado, mostrar solo los últimos 4 dígitos. Ejemplo: `****1377`.
+  - En la base de datos, debe almacenarse cifrada.
 
-1. **Definir variables globales**: 
-   - 📌 Definir variables para almacenar el número máximo de intentos permitidos.
-   - 📌 Definir el tiempo de bloqueo (5 minutos por defecto).
-   - 📌 Crear un diccionario para registrar el estado de los usuarios: `{ "usuario": { "intentos": 0, "tiempoBloqueo": 0 } }`
 
-2. **Validar si el correo existe en la base de datos**:
-   - ✅ Si el usuario existe y la contraseña es correcta, resetear su contador de intentos fallidos a cero.
-   - ❌ Si la contraseña es incorrecta, incrementar el contador de intentos fallidos.
+**Tips de Implementación**:
+1. **Modificar la base de datos** para almacenar la cédula cifrada y el nonce con la que se realice el cifrado. La llave para cifrar puede ser la misma para todos los usuarios, o generar una nueva en cada login, si se decide este último método, deberán almacenar la llave también. 
+2. **Actualizar la lógica de visualización** se deberá descifrar el dni almacenado, luego ofuscarlo mostrando solo los últimos 4 dígitos para posteriormente renderizarlo en la vista /records.
+3. **Realizar pruebas** para verificar que los datos en reposo están cifrados y que la visualización funciona correctamente.
 
-3. **Bloquear la cuenta si se exceden los intentos permitidos**:
-   - 🚨 Si se superan los 3 intentos fallidos, actualizar el `tiempoBloqueo` en el diccionario, estableciéndolo al tiempo de bloqueo.
-
-4. **Verificar si la cuenta está bloqueada**:
-   - 🔎 Antes de procesar la autenticación, verificar si el usuario sigue en estado de bloqueo.
-   - ⏳ Si el tiempo de bloqueo no ha terminado, mostrar un mensaje informando cuánto tiempo queda hasta el desbloqueo.
-
-#### **2️⃣ Implementación de Control de Acceso Basado en Roles (1pt)**
-
-1. **Añadir un campo de rol al registro del usuario**:
-   - 📝 Modificar la base de datos y el formulario de registro para incluir el campo `rol`, que podrá tomar los valores `admin` o `user`.
-
-2. **Modificar el proceso de autenticación**:
-   - 🔄 Al iniciar sesión, almacenar el rol del usuario en la sesión, por ejemplo: `session['role'] = 'admin'` o `session['role'] = 'user'.
-
-3. **Implementar la lógica de autorización**:
-   - 🚦 Modificar la ruta `/records` para que solo los usuarios con rol `admin` puedan acceder a todos los registros de la base de datos.
-   - 👤 Si el usuario tiene el rol `user`, solo podrá visualizar y actualizar su propio registro.
-   - 🗑️ Implementar la lógica para la eliminación de usuarios:
-
-      - Solo los usuarios con rol admin pueden eliminar otros usuarios.
-      - Agregar un botón de eliminación en la vista HTML para la gestión de usuarios.
-      - Implementar un endpoint que realice la eliminación del usuario seleccionado.
-
-#### **3️⃣ Implementación Validación de Entradas (1pt)**
-
-1. **Validación de Usuario**  
-  - El **nombre de usuario** solo puede contener **caracteres alfabéticos y el punto (`.`)**.  
-  - Ejemplo válido: `sara.palacios`.  
-
-2. **Validación de Contraseña**  
-  Según las **políticas de seguridad de la Universidad del Rosario**, una contraseña debe cumplir con:  
-    - **Al menos una letra minúscula, una letra mayúscula y un número**.  
-    - **Al menos un carácter especial requerido**: `# * @ $ % & - ! + = ?`.  
-    - **Longitud mínima:** 8 caracteres.  
-    - **Longitud máxima:** 35 caracteres.  
-
-3. **Validación de Correo Electrónico**  
-  - Se debe asegurar que el **dominio del correo electrónico** sea: `@urosario.edu.co`.  
-
-4. **Validación de Fecha de Nacimiento**  
-  - Solo se pueden registrar usuarios **mayores de 16 años**.  
-
-5. **Validación de Documento de Identificación**  
-  - Debe ser **numérico** y tener **máximo 10 dígitos**.  
-  - Debe **iniciar con "1000000000"**.  
 ---
 
-🚀 Cómo clonar BankingSystem y subirlo a un nuevo repositorio
+## 2️⃣ Seguridad en la Extracción de Dinero
 
-Si necesitas trabajar con el código del repositorio BankingSystem y subirlo a un nuevo repositorio, sigue estos pasos:
+Para fortalecer la seguridad en el endpoint `/withdraw`, se agregará autenticación secundaria:
 
-Clonar el repositorio original:
-```bash
-git clone https://github.com/SSDLC-UR-20251/BankingSystem.git
-cd BankingSystem
-```
-Eliminar la conexión con el repositorio original:
+**Tips de Implementación**:
+1. **Modificar la vista /withdraw** para agregar un campo donde el usuario deba ingresar su contraseña antes de realizar un retiro.
+2. **Actualizar el api** para validar que la contraseña ingresada coincide con la almacenada en la base de datos (al igual como lo hacemos en el login).
+3. **Si la validación es exitosa**, permitir la extracción.
+4. **Si la validación es incorrecta**, mostrar un mensaje de error y rechazar la operación.
 
-```bash
-git remote remove origin
-```
+---
 
-Copia la URL de tu repositorio.
+## 3️⃣ Manejo de Sesiones Seguras
 
-Agregar el nuevo repositorio como remoto:
+Estas funciones están enfocadas en mejorar la seguridad de la aplicación, asegurando un correcto manejo de sesiones:
 
-```bash
-git remote add origin https://github.com/usuario/nuevo-repo.git
-```
-Subir el código al nuevo repositorio:
-```bash
-git push -u origin main
-```
-Si experimentas errores de autenticación al hacer git pull o git push, sigue estos pasos para autenticarte localmente:
+### 🔑 1. Control de Sesión con Roles
 
- - Configurar almacenamiento de credenciales para HTTPS:
-```bash
+- **Validar la sesión activa en cada solicitud**.
+- **Verificar la existencia de la sesión del usuario** antes de conceder acceso a cualquier endpoint.
+- **Si la sesión no es válida**, redirigir al usuario a la página de login.
 
-git config --global credential.helper store
-git push -u origin main
-```
-Luego, introduce tus credenciales cuando se te soliciten. Estas se guardarán localmente para futuras conexiones.
+### 🚪 2. Implementar Cierre de Sesión Seguro
 
-- Autenticarse usando un token personal en HTTPS:
-Si usas autenticación con token en GitHub, usa este formato al hacer git pull o git push:
-```bash
+- **Crear una ruta `/logout`** que elimine todos los datos de sesión y redirija al usuario a la página de login.
+- **Asegurar que al eliminar un usuario**, su sesión también sea eliminada para evitar accesos no autorizados.
 
-git remote set-url origin https://<TOKEN>@github.com/usuario/nuevo-repo.git
-```
+### ⏳ 3. Expiración de Sesión
 
-Crear una nueva rama para tu implementación:
-```bash
-git checkout -b feature/nueva-funcionalidad
-```
-Agregar los cambios realizados:
-```bash
-git add .
-```
-Realizar un commit con un mensaje descriptivo:
-```bash
-git commit -m "Agrega nueva funcionalidad de autorización basada en roles"
-```
-Subir la rama al repositorio remoto:
-```bash
-git push origin feature/nueva-funcionalidad
-```
-Crear un PullRequest y agregar la URL a la entrega en e-aulas.
+- **Configurar la sesión para expirar después de 5 minutos de inactividad**.
+- **Usar `session.permanent = True` y definir el tiempo de vida** con:
+  ```python
+  app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=5)
+  ```
+- **Implementar validación global** en cada solicitud usando `@before_request`.
+- **Si la sesión ha expirado**, redirigir al usuario al login.
+
+---
+
+## 4️⃣ 4. Personalización de la Interfaz (Modo Oscuro)
+
+- **Modificar la vista /edit_user** agregando un checkbox en la configuración de usuario para activar o desactivar el modo oscuro.
+- **Actualizar el API** para almacenar la preferencia en una cookie. (no olviden agregar las flags de seguridad)
+- **Modificar las vistas** para que la interfaz refleje la preferencia almacenada en la cookie.
+- **Aplicar la configuración a todas las páginas**.
+- **Incluir los estilos y scripts necesarios en las vistas**:
+  ```html
+  <html lang="en" data-bs-theme="{{ 'dark' if darkmode == 'dark' else 'light' }}">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+        crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+  ```
+
+---
+
+## 📌 Instrucciones de Entrega
+
+1. **Subir los cambios a una nueva rama** `feature/security-improvements`.
+2. **Asegurar que todas las funcionalidades han sido implementadas y probadas**.
+3. **Crear un Pull Request** con la descripción de los cambios realizados.
+4. **Entregar la URL del pull request en e-aulas**.
+
