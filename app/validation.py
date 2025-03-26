@@ -53,7 +53,6 @@ def validate_pswd(pswd):
 def validate_name(name):
     return bool(re.fullmatch(r'^[a-zA-Z]+$', name))
 
-
 class TestValidationFunctions(unittest.TestCase):
     
     def test_validate_email(self):
