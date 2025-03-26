@@ -1,91 +1,99 @@
-# 💻 Desarrollo Seguro en Aplicaciones Bancarias
+# 🚀 Configuración de Jenkins en Docker y Despliegue con Ngrok
 
-## 🏛 Universidad del Rosario - 2025 - 1
-
-En este ejercicio se abordarán múltiples aspectos de seguridad en una aplicación bancaria, incluyendo el tratamiento de datos confidenciales, autenticación en operaciones sensibles y manejo de sesiones. 
+Este documento describe los pasos para instalar **Jenkins en Docker**, configurarlo con **GitHub** y ejecutar un **Pipeline de CI/CD**.
 
 ---
 
-## 1️⃣ Tratamiento de Datos Restringidos
+### **📌 1. Instalación de Docker**
 
-### 🔐 Ofuscación y Cifrado de Datos Sensibles
+Para ejecutar Jenkins en un contenedor Docker, primero instalamos Docker en tu codespace:
 
-Para garantizar la privacidad de los datos almacenados y visualizados en la aplicación, se implementarán los siguientes controles:
+### **🔹 Verificar si Docker está instalado**
+```bash
+docker --version
+```
 
-- **Cédula**: 
-  - En la vista del cliente autenticado, mostrar solo los últimos 4 dígitos. Ejemplo: `****1377`.
-  - En la base de datos, debe almacenarse cifrada.
+🔹 Instalar Docker
+```bash
+sudo apt update && sudo apt install -y docker.io
+```
+
+🔹 Agregar permisos al usuario actual
+```bash
+sudo usermod -aG docker $USER
+exec $SHELL
+```
+Esto permite ejecutar docker sin usar sudo.
+
+### **📌 2. Instalación de Jenkins en Docker**
+Ejecuta el siguiente comando para descargar y ejecutar Jenkins LTS en un contenedor Docker:
+
+```bash
+docker run -d --name jenkins -p 8080:8080 -p 50000:50000 \
+    -v jenkins_home:/var/jenkins_home \
+    jenkins/jenkins:lts
+```
+
+🔹 Obtener la contraseña inicial de Jenkins
+Después de iniciar Jenkins, obtén la contraseña para configurarlo:
+
+```bash
+
+docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword
+```
+📌 Copia esta contraseña y pégala en la página de configuración inicial de Jenkins (se disponibiliza el el codespace)
 
 
-**Tips de Implementación**:
-1. **Modificar la base de datos** para almacenar la cédula cifrada y el nonce con la que se realice el cifrado. La llave para cifrar puede ser la misma para todos los usuarios, o generar una nueva en cada login, si se decide este último método, deberán almacenar la llave también. 
-2. **Actualizar la lógica de visualización** se deberá descifrar el dni almacenado, luego ofuscarlo mostrando solo los últimos 4 dígitos para posteriormente renderizarlo en la vista /records.
-3. **Realizar pruebas** para verificar que los datos en reposo están cifrados y que la visualización funciona correctamente.
 
----
+### **📌 3. Modificar el Contenedor de Jenkins e Instalar Python**
+Jenkins se ejecuta en un contenedor sin Python preinstalado. Sigue estos pasos para instalar Python y venv en el contenedor:
 
-## 2️⃣ Seguridad en la Extracción de Dinero
+🔹 Listar los contenedores en ejecución
+```bash
+docker ps -a
+```
+🔹 Acceder al contenedor de Jenkins como root
+```bash
+docker exec -it --user root <Container ID> bash
+```
+🔹 Instalar Python y herramientas necesarias
+```bash
+apt update
+apt install python3 python3-pip -y
+apt install -y python3-venv
+exit
+```
+🔹 Reiniciar el contenedor
+```bash
+docker restart <Container ID>
+```
+📌 Esto asegura que Python y venv estén disponibles en Jenkins.
 
-Para fortalecer la seguridad en el endpoint `/withdraw`, se agregará autenticación secundaria:
+### **📌 4. Instalación de Plugins Comunes**
+Una vez dentro de Jenkins:
 
-**Tips de Implementación**:
-1. **Modificar la vista /withdraw** para agregar un campo donde el usuario deba ingresar su contraseña antes de realizar un retiro.
-2. **Actualizar el api** para validar que la contraseña ingresada coincide con la almacenada en la base de datos (al igual como lo hacemos en el login).
-3. **Si la validación es exitosa**, permitir la extracción.
-4. **Si la validación es incorrecta**, mostrar un mensaje de error y rechazar la operación.
+1. Accede a "Manage Jenkins" > "Manage Plugins".
 
----
+2. Instala los siguientes plugins recomendados:
 
-## 3️⃣ Manejo de Sesiones Seguras
+- Pipeline
 
-Estas funciones están enfocadas en mejorar la seguridad de la aplicación, asegurando un correcto manejo de sesiones:
+- GitHub
 
-### 🔑 1. Control de Sesión con Roles
+- Docker Pipeline
 
-- **Validar la sesión activa en cada solicitud**.
-- **Verificar la existencia de la sesión del usuario** antes de conceder acceso a cualquier endpoint.
-- **Si la sesión no es válida**, redirigir al usuario a la página de login.
+- Multibranch Pipeline
 
-### 🚪 2. Implementar Cierre de Sesión Seguro
+### **📌 5. Configurar el Proyecto en Jenkins**
+🔹 Copiar el Jenkinsfile en tu Repositorio
 
-- **Crear una ruta `/logout`** que elimine todos los datos de sesión y redirija al usuario a la página de login.
-- **Asegurar que al eliminar un usuario**, su sesión también sea eliminada para evitar accesos no autorizados.
+### **📌 6. Crear un Pipeline en Jenkins**
+1. En Jenkins, haz clic en "New Item".
 
-### ⏳ 3. Expiración de Sesión
+2. Ingresa un nombre para el proyecto (ej. My-Pipeline).
 
-- **Configurar la sesión para expirar después de 5 minutos de inactividad**.
-- **Usar `session.permanent = True` y definir el tiempo de vida** con:
-  ```python
-  app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=5)
-  ```
-- **Implementar validación global** en cada solicitud usando `@before_request`.
-- **Si la sesión ha expirado**, redirigir al usuario al login.
+3. Selecciona **Multibranch Pipeline** y haz clic en OK.
 
----
+4. En **Branch Sources**, haz clic en **Add Source** y elige **GitHub**.
 
-## 4️⃣ 4. Personalización de la Interfaz (Modo Oscuro)
-
-- **Modificar la vista /edit_user** agregando un checkbox en la configuración de usuario para activar o desactivar el modo oscuro.
-- **Actualizar el API** para almacenar la preferencia en una cookie. (no olviden agregar las flags de seguridad)
-- **Modificar las vistas** para que la interfaz refleje la preferencia almacenada en la cookie.
-- **Aplicar la configuración a todas las páginas**.
-- **Incluir los estilos y scripts necesarios en las vistas**:
-  ```html
-  <html lang="en" data-bs-theme="{{ 'dark' if darkmode == 'dark' else 'light' }}">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
-        crossorigin="anonymous">
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script>
-  ```
-
----
-
-## 📌 Instrucciones de Entrega
-
-1. **Subir los cambios a una nueva rama** `feature/security-improvements`.
-2. **Asegurar que todas las funcionalidades han sido implementadas y probadas**.
-3. **Crear un Pull Request** con la descripción de los cambios realizados.
-4. **Entregar la URL del pull request en e-aulas**.
-
+5. Ingresa la URL de tu repositorio de GitHub.
