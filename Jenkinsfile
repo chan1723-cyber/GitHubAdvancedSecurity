@@ -9,8 +9,13 @@ pipeline {
         }
         stage('Ejecutar la Aplicación') {
             steps {
-                sh 'screen -dmS banking_app python run.py'
+                sh 'screen -dmS banking_app bash -c "python3 run.py"'
                 sleep 5
+            }
+        }
+        stage('Verificar Screen') {
+            steps {
+                sh 'screen -ls'
             }
         }
     }
