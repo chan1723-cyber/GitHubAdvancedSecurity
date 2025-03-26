@@ -1,4 +1,4 @@
-# 🚀 Configuración de Jenkins en Docker y Despliegue con Ngrok
+# 🚀 Configuración de Jenkins en Docker 
 
 Este documento describe los pasos para instalar **Jenkins en Docker**, configurarlo con **GitHub** y ejecutar un **Pipeline de CI/CD**.
 
