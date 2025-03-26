@@ -7,15 +7,10 @@ pipeline {
                 sh 'python3 -m pip install -r requeriments.txt --break-system-packages'
             }
         }
-        stage('Ejecutar la Aplicación') {
+        stage('Ejecutar los tests') {
             steps {
-                sh 'tmux new-session -d -s banking_app "python3 run.py"'
-                sleep 5
+               sh 'python3 app/validation.py'
             }
-        }
-        stage('Verificar Screen') {
-            steps {
-                sh 'tmux list-sessions'            }
         }
 
     }
