@@ -2,13 +2,14 @@ pipeline {
     agent any
     stages {
         stage('Instalar Dependencias') {
-            steps {
-                sh 'pip install -r requirements.txt'
+            steps {                
+                sh 'python3 -m pip install --upgrade pip'
+                sh 'python3 -m pip install -r requirements.txt'
             }
         }
         stage('Ejecutar la Aplicación') {
             steps {
-                sh 'python run.py &'
+                sh 'python3 run.py &'
             }
         }
         stage('Exponer con Ngrok') {
