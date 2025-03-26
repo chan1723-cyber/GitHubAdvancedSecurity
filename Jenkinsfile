@@ -1,9 +1,21 @@
 pipeline {
-    agent { docker { image 'python:3.13.2-alpine3.21' } }
+    agent any
     stages {
-        stage('build') {
+        stage('Instalar Dependencias') {
             steps {
-                sh 'python --version'
+                sh 'pip install -r requirements.txt'
+            }
+        }
+        stage('Ejecutar la Aplicación') {
+            steps {
+                sh 'python run.py &'
+            }
+        }
+        stage('Exponer con Ngrok') {
+            steps {
+                sh 'ngrok http 5000 &'
+                sleep 5
+                sh 'curl -s http://localhost:4040/api/tunnels'
             }
         }
     }
