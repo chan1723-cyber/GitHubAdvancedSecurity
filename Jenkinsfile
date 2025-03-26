@@ -9,7 +9,7 @@ pipeline {
         }
         stage('Ejecutar la Aplicación') {
             steps {
-                sh 'python3 run.py &'
+                sh 'screen -dmS banking_app python run.py'
                 sleep 5
             }
         }
