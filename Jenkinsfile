@@ -1,12 +1,10 @@
 pipeline {
     agent any
     stages {
-        stage('Configurar Entorno Virtual') {
-            steps {
-                sh 'python3 -m venv venv'       
-                sh 'source venv/bin/activate'   
-                sh 'venv/bin/pip install --upgrade pip'  
-                sh 'venv/bin/pip install -r requeriments.txt'  
+        stage('Instalar Dependencias') {
+            steps {                
+                sh 'python3 -m pip install --upgrade pip'
+                sh 'python3 -m pip install -r requeriments.txt --break-system-packages'
             }
         }
         stage('Ejecutar la Aplicación') {
