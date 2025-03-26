@@ -20,7 +20,7 @@ pipeline {
         }
         stage('Ver Logs de la Aplicación') {
             steps {
-                sh 'sleep 5'  // Esperar un poco para que la app se inicie
+                sh 'sleep 20'  // Esperar un poco para que la app se inicie
                 sh 'cat banking_app.log || echo "No hay logs aún"'
             }
         }
