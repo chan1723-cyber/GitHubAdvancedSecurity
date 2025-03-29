@@ -1,29 +1,25 @@
 pipeline {
     agent any
     stages {
-        stage('Instalar Dependencias') {
-            steps {                
-                sh 'python3 -m pip install --upgrade pip --break-system-packages'
-                sh 'python3 -m pip install -r requeriments.txt --break-system-packages'
+       stages {
+        stage('Clonar código') {
+            steps {
+                git 'https://github.com/SSDLC-UR-20251/BankingSystem.git'
             }
         }
-        stage('Ejecutar los tests') {
+        stage('Construir imagen Docker') {
             steps {
-               sh 'python3 app/validation.py'
+                sh 'docker build -t mi_app .'
             }
         }
-        stage('Empaquetar') {
+        stage('Ejecutar contenedor') {
             steps {
-                sh 'zip -r app.zip *'
+                sh 'docker run -d -p 5000:5000 --name mi_app_container mi_app'
             }
         }
-        stage('Deploy') {
+        stage('Verificar contenedores') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'e4b6ff5f-fdc7-4baa-b3cf-ecff8eeb090f', usernameVariable: 'FTP_USER', passwordVariable: 'FTP_PASS')]) {
-                    sh """
-                    lftp -e "set ftp:ssl-allow no; mirror -R . /site/wwwroot; bye" -u $FTP_USER,$FTP_PASS ftps://waws-prod-yt1-083.ftp.azurewebsites.windows.net
-                    """
-                }
+                sh 'docker ps'
             }
         }
     }
