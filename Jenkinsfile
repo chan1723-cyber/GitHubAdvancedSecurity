@@ -27,7 +27,10 @@ pipeline {
                         paramPublish: [],  
                         publishers: [
                             server: 'ftps://waws-prod-yt1-083.ftp.azurewebsites.windows.net/site/wwwroot',
-                            credentialsId: 'e4b6ff5f-fdc7-4baa-b3cf-ecff8eeb090f',  
+                            port: 21,
+                            credentialsId: '',  
+                            username: 'BankingSystem\$BankingSystem',
+                            password: 'olf77RhjH45KkpdoFusto2Jzn9QMHPc86csivGYT8ChlbYNXbpjcrX0TyaEg',
                             transfers: [
                                 sourceFiles: '**/*',  
                                 remoteDirectory: '/site/wwwroot',  
