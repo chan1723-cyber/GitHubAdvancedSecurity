@@ -19,18 +19,24 @@ pipeline {
         }
         stage('Subir a Azure por FTP') {
             steps {
-                ftpPublisher(
-                    publishers: [ftpPublisherPublisher(
-                        configName: 'AzureWebAppFTP',
-                        transfers: [ftpPublisherTransfer(
-                            sourceFiles: 'app.zip',
-                            remoteDirectory: '/site/wwwroot',
-                            removePrefix: ''
-                        )],
-                        useWorkspaceInPromotion: false,
-                        usePromotionTimestamp: false
-                    )]
-                )
+                    ftpPublisher(
+                        alwaysPublishFromMaster: false,
+                        continueOnError: false,
+                        failOnError: true,
+                        masterNodeName: '',
+                        paramPublish: false,
+                        publishers: [ftpPublisherPublisher(
+                            configName: 'AzureWebAppFTP',
+                            transfers: [ftpPublisherTransfer(
+                                sourceFiles: '**/*',   
+                                remoteDirectory: '/site/wwwroot',  
+                                removePrefix: '',
+                                remoteDirectorySDF: false
+                            )],
+                            useWorkspaceInPromotion: false,
+                            usePromotionTimestamp: false
+                        )]
+                    )
             }
         }
     }
