@@ -3,7 +3,9 @@ pipeline {
     stages {
         stage('Clonar código') {
             steps {
-                git url: 'https://github.com/SSDLC-UR-20251/BankingSystem.git'
+                script {
+                    checkout scm
+                }
             }
         }
         stage('Construir imagen Docker') {
