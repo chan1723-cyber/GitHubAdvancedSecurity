@@ -12,6 +12,26 @@ pipeline {
                sh 'python3 app/validation.py'
             }
         }
+        stage('Empaquetar') {
+            steps {
+                sh 'zip -r app.zip *'
+            }
+        }
+        stage('Subir a Azure por FTP') {
+            steps {
+                ftpPublisher(
+                    publishers: [ftpPublisherPublisher(
+                        configName: 'AzureWebAppFTP',
+                        transfers: [ftpPublisherTransfer(
+                            sourceFiles: 'app.zip',
+                            remoteDirectory: '/site/wwwroot',
+                            removePrefix: ''
+                        )],
+                        useWorkspaceInPromotion: false,
+                        usePromotionTimestamp: false
+                    )]
+                )
+            }
 
     }
 }
