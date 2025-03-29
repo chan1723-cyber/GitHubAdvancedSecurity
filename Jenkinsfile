@@ -27,12 +27,12 @@ pipeline {
                         paramPublish: [[$class: 'BapFtpParamPublish']],  
                         publishers: [ftpPublisherPublisher(
                             configName: 'e4b6ff5f-fdc7-4baa-b3cf-ecff8eeb090f', 
-                            transfers: [ftpPublisherTransfer(
+                            transfers: [
                                 sourceFiles: '**/*',  
                                 remoteDirectory: '/site/wwwroot',  
                                 removePrefix: '',
                                 remoteDirectorySDF: false
-                            )],
+                            ],
                             useWorkspaceInPromotion: false,
                             usePromotionTimestamp: false
                         )]
