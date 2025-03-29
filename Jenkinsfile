@@ -21,7 +21,7 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'e4b6ff5f-fdc7-4baa-b3cf-ecff8eeb090f', usernameVariable: 'FTP_USER', passwordVariable: 'FTP_PASS')]) {
                     sh """
-                    lftp -e "set ftp:ssl-allow no; mirror -R . /site/wwwroot; bye" -u 'BankingSyste\sara','r&07K31#uBJu123' ftps://waws-prod-yt1-083.ftp.azurewebsites.windows.net
+                    lftp -e "set ftp:ssl-allow no; mirror -R . /site/wwwroot; bye" -u $FTP_USER,$FTP_PASS ftps://waws-prod-yt1-083.ftp.azurewebsites.windows.net
                     """
                 }
             }
