@@ -15,7 +15,7 @@ pipeline {
         }
         stage('Ejecutar pruebas automatizadas') {
             steps {
-                sh 'python3 test_banking.py'
+                sh 'pip3 install selenium && python3 test_banking.py'
             }
         }
         stage('Construir imagen Docker') {
