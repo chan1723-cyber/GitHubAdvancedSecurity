@@ -1,7 +1,6 @@
 pipeline {
     agent any
     stages {
-       stages {
         stage('Clonar código') {
             steps {
                 git 'https://github.com/SSDLC-UR-20251/BankingSystem.git'
