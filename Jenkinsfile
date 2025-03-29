@@ -24,21 +24,17 @@ pipeline {
                         continueOnError: false,
                         failOnError: true,
                         masterNodeName: '',
-                        paramPublish: [
-                            [
-                                configName: 'e4b6ff5f-fdc7-4baa-b3cf-ecff8eeb090f', // Nombre de la configuración FTP en Jenkins
-                                transfers: [
-                                    [
-                                        sourceFiles: '**/*.zip', // Archivos a transferir
-                                        remoteDirectory: '/site/wwwroot', // Directorio remoto en Azure
-                                        removePrefix: '',
-                                        remoteDirectorySDF: false,
-                                        flatten: false
-                                    ]
-                                ],
-                                useWorkspaceInPromotion: false,
-                                usePromotionTimestamp: false
-                            ]
+                        paramPublish: [[$class: 'BapFtpParamPublish']],  
+                        publishers: [
+                            configName: 'e4b6ff5f-fdc7-4baa-b3cf-ecff8eeb090f', 
+                            transfers: [
+                                sourceFiles: '**/*',  
+                                remoteDirectory: '/site/wwwroot',  
+                                removePrefix: '',
+                                remoteDirectorySDF: false
+                            ],
+                            useWorkspaceInPromotion: false,
+                            usePromotionTimestamp: false
                         ]
                     )
             }
