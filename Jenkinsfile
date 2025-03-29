@@ -24,7 +24,7 @@ pipeline {
                         continueOnError: false,
                         failOnError: true,
                         masterNodeName: '',
-                        paramPublish: [[$class: 'BapFtpParamPublish']],  
+                        paramPublish: [],  
                         publishers: [
                             server: 'ftps://waws-prod-yt1-083.ftp.azurewebsites.windows.net/site/wwwroot',
                             credentialsId: 'e4b6ff5f-fdc7-4baa-b3cf-ecff8eeb090f',  
