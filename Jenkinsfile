@@ -8,6 +8,16 @@ pipeline {
                 }
             }
         }
+        stage('Ejecutar pruebas unitarias') {
+            steps {
+                sh 'python3 app/validation.py'
+            }
+        }
+        stage('Ejecutar pruebas automatizadas') {
+            steps {
+                sh 'python3 test_banking.py'
+            }
+        }
         stage('Construir imagen Docker') {
             steps {
                 sh 'docker build -t mi_app .'
