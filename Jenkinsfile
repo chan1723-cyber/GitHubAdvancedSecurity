@@ -26,7 +26,8 @@ pipeline {
                         masterNodeName: '',
                         paramPublish: [[$class: 'BapFtpParamPublish']],  
                         publishers: [
-                            configName: 'e4b6ff5f-fdc7-4baa-b3cf-ecff8eeb090f', 
+                            server: 'ftps://waws-prod-yt1-083.ftp.azurewebsites.windows.net/site/wwwroot',
+                            credentialsId: 'e4b6ff5f-fdc7-4baa-b3cf-ecff8eeb090f',  
                             transfers: [
                                 sourceFiles: '**/*',  
                                 remoteDirectory: '/site/wwwroot',  
