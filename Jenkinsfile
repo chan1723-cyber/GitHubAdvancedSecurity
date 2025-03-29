@@ -13,11 +13,7 @@ pipeline {
                 sh 'python3 app/validation.py'
             }
         }
-        stage('Ejecutar pruebas automatizadas') {
-            steps {
-                sh 'pip3 install selenium && python3 test_banking.py'
-            }
-        }
+
         stage('Construir imagen Docker') {
             steps {
                 sh 'docker build -t mi_app .'
@@ -31,6 +27,11 @@ pipeline {
         stage('Verificar contenedores') {
             steps {
                 sh 'docker ps -a'
+            }
+        }
+        stage('Ejecutar pruebas automatizadas') {
+            steps {
+                sh 'python3 test_banking.py'
             }
         }
     }
