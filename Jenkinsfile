@@ -24,12 +24,12 @@ pipeline {
                         continueOnError: false,
                         failOnError: true,
                         masterNodeName: '',
-                        paramPublish: [[$class: 'BapFtpParamPublish']],  // 📌 Configuración corregida
+                        paramPublish: [[$class: 'BapFtpParamPublish']],  
                         publishers: [ftpPublisherPublisher(
-                            configName: 'AzureWebAppFTP',  // 📌 Nombre de la credencial de FTP en Jenkins
+                            configName: 'e4b6ff5f-fdc7-4baa-b3cf-ecff8eeb090f', 
                             transfers: [ftpPublisherTransfer(
-                                sourceFiles: '**/*',  // 📌 Subir todos los archivos del workspace
-                                remoteDirectory: '/site/wwwroot',  // 📌 Directorio donde Azure Web App aloja los archivos
+                                sourceFiles: '**/*',  
+                                remoteDirectory: '/site/wwwroot',  
                                 removePrefix: '',
                                 remoteDirectorySDF: false
                             )],
