@@ -17,31 +17,13 @@ pipeline {
                 sh 'zip -r app.zip *'
             }
         }
-        stage('Subir a Azure por FTP') {
+        stage('Deploy') {
             steps {
-                    ftpPublisher(
-                        alwaysPublishFromMaster: false,
-                        continueOnError: false,
-                        failOnError: true,
-                        masterNodeName: '',
-                        paramPublish: [],  
-                        publishers: [
-                            server: 'ftps://waws-prod-yt1-083.ftp.azurewebsites.windows.net/site/wwwroot',
-                            port: 21,
-                            credentialsId: '',  
-                            username: 'BankingSystem\$BankingSystem',
-                            password: 'olf77RhjH45KkpdoFusto2Jzn9QMHPc86csivGYT8ChlbYNXbpjcrX0TyaEg',
-                            transfers: [
-                                sourceFiles: '**/*',  
-                                remoteDirectory: '/site/wwwroot',  
-                                removePrefix: '',
-                                remoteDirectorySDF: false
-                            ],
-                            useWorkspaceInPromotion: false,
-                            usePromotionTimestamp: false
-                        ]
-                    )
+                withCredentials([usernamePassword(credentialsId: 'e4b6ff5f-fdc7-4baa-b3cf-ecff8eeb090f', usernameVariable: 'FTP_USER', passwordVariable: 'FTP_PASS')]) {
+                    sh """
+                    lftp -e "set ftp:ssl-allow no; mirror -R ./dist /site/wwwroot; bye" -u $FTP_USER,$FTP_PASS ftps://waws-prod-yt1-083.ftp.azurewebsites.windows.net
+                    """
+                }
             }
-        }
     }
 }
