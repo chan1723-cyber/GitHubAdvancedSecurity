@@ -12,7 +12,7 @@ BLOCK_TIME = 300  # 5 minutos en segundos
 app.secret_key = 'your_secret_key'
 
 mysqldb_user = 'admin'
-mysqldb_password = 'admin'
+mysqldb_password = 'password'
 
 @app.route('/api/users', methods=['POST'])
 def create_record():
