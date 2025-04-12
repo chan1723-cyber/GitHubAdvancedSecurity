@@ -1,17 +1,38 @@
 pipeline {
     agent any
     stages {
-        stage('Instalar Dependencias') {
-            steps {                
-                sh 'python3 -m pip install --upgrade pip --break-system-packages'
-                sh 'python3 -m pip install -r requeriments.txt --break-system-packages'
+        stage('Clonar código') {
+            steps {
+                script {
+                    checkout scm
+                }
             }
         }
-        stage('Ejecutar los tests') {
+        stage('Ejecutar pruebas unitarias') {
             steps {
-               sh 'python3 app/validation.py'
+                sh 'python3 app/validation.py'
             }
         }
 
+        stage('Construir imagen Docker') {
+            steps {
+                sh 'docker build -t mi_app .'
+            }
+        }
+        stage('Ejecutar contenedor') {
+            steps {
+                sh 'docker run -d -p 5000:5000 --name mi_app_container mi_app'
+            }
+        }
+        stage('Verificar contenedores') {
+            steps {
+                sh 'docker ps -a'
+            }
+        }
+        stage('Ejecutar pruebas automatizadas') {
+            steps {
+                sh 'python3 test_banking.py'
+            }
+        }
     }
 }
