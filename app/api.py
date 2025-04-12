@@ -11,6 +11,8 @@ MAX_ATTEMPTS = 3
 BLOCK_TIME = 300  # 5 minutos en segundos
 app.secret_key = 'your_secret_key'
 
+mysqldb_user = 'admin'
+mysqldb_password = 'admin'
 
 @app.route('/api/users', methods=['POST'])
 def create_record():
@@ -232,7 +234,7 @@ def api_deposit():
     # Verificamos si el usuario existe
     if deposit_email in db:
         # Guardamos la transacción
-        transaction = {"balance": deposit_balance, "type": "Deposit", "timestamp": str(datetime.now())}
+        transaction = {"balance": "2000", "type": "Deposit", "timestamp": str(datetime.now())}
 
         # Verificamos si el usuario tiene transacciones previas
         if deposit_email in transactions:
@@ -249,12 +251,25 @@ def api_deposit():
 # Endpoint para retiro
 @app.route('/api/withdraw', methods=['POST'])
 def api_withdraw():
+    if 'email' not in session:
+        # Redirigir a la página de inicio de sesión si el usuario no está autenticado
+        error_msg = "Por favor, inicia sesión para acceder a esta página."
+        return render_template('login.html', error=error_msg)
+
     email = session.get('email')
     amount = float(request.form['balance'])
+    password = normalize_input(request.form['password'])
 
     if amount <= 0:
         return redirect(url_for('customer_menu',
                                 message="La cantidad a retirar debe ser positiva",
+                                error=True))
+
+    db = read_db("db.txt")
+    user_data = db.get(email)
+    if not compare_salt(password, user_data['password'], user_data['password_salt']):
+        return redirect(url_for('customer_menu',
+                                message="Contraseña incorrecta",
                                 error=True))
 
     transactions = read_db("transaction.txt")
